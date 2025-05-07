@@ -5,6 +5,7 @@ class GraphEditor {
         this.ctx = this.canvas.getContext('2d');
         this.selected = null;
         this.hovered = null;
+        this.dragging = false;
 
         this.#addEventListeners();
     }
@@ -27,6 +28,7 @@ class GraphEditor {
 
                 if (this.hovered) {
                     this.selected = this.hovered;
+                    this.dragging = true;
                     return;
                 }
 
@@ -45,9 +47,14 @@ class GraphEditor {
         this.canvas.addEventListener('mousemove', (event) => {
             const mouse = new Point(event.offsetX, event.offsetY);
             this.hovered = getNearestPoint(mouse, this.graph.points, 10);
+            if (this.dragging === true) {
+                this.selected.x = mouse.x;
+                this.selected.y = mouse.y;
+            }
         });
 
         this.canvas.addEventListener('contextmenu', (event) => event.preventDefault());
+        this.canvas.addEventListener('mouseup', () => this.dragging = false);
     }
 
     #removePoint(point) {
