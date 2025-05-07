@@ -4,7 +4,7 @@ class Point {
         this.y = y;
     }
 
-    draw(ctx, { size = 18, color = 'black', outline = false } = {}) {
+    draw(ctx, { size = 18, color = 'black', outline = false, fill = false } = {}) {
         const rad = size / 2;
         ctx.beginPath();
         ctx.fillStyle = color;
@@ -17,6 +17,13 @@ class Point {
             ctx.strokeStyle = 'yellow';
             ctx.arc(this.x, this.y, rad * 0.6, 0, Math.PI * 2);
             ctx.stroke();
+        }
+
+        if (fill) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, rad * 0.4, 0, Math.PI * 2);
+            ctx.fillStyle = 'yellow';
+            ctx.fill();
         }
     }
 

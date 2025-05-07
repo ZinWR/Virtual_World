@@ -11,6 +11,9 @@ class GraphEditor {
 
     display() {
         this.graph.draw(this.ctx);
+        if (this.hovered) {
+            this.hovered.draw(this.ctx,{ fill: true });
+        }
         if (this.selected) {
             this.selected.draw(this.ctx,{ outline: true });
         }
@@ -18,17 +21,40 @@ class GraphEditor {
 
     #addEventListeners() {
         this.canvas.addEventListener('mousedown', (event) => {
-            const mouse = new Point(event.offsetX, event.offsetY);
-            this.hovered = getNearestPoint(mouse, this.graph.points);
+            // Left Click
+            if (event.button === 0) {
+                const mouse = new Point(event.offsetX, event.offsetY);
 
-            if (this.hovered) {
-                this.selected = this.hovered;
-                return;
+                if (this.hovered) {
+                    this.selected = this.hovered;
+                    return;
+                }
+
+                this.graph.addPoint(mouse);
+                this.selected = mouse;
+                this.hovered = mouse;
             }
 
-            this.graph.addPoint(mouse);
-            this.selected = mouse;
+            // Right Click
+            if (event.button === 2) {
+                if (this.hovered) this.#removePoint(this.hovered);
+            }
+   
         });
+
+        this.canvas.addEventListener('mousemove', (event) => {
+            const mouse = new Point(event.offsetX, event.offsetY);
+            this.hovered = getNearestPoint(mouse, this.graph.points, 10);
+        });
+
+        this.canvas.addEventListener('contextmenu', (event) => event.preventDefault());
     }
-        
+
+    #removePoint(point) {
+        this.graph.removePoint(point);
+        this.hovered = null;
+
+        if (this.selected === point) this.selected = null;
+    }
+
 }
