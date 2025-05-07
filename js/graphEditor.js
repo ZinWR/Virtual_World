@@ -27,19 +27,20 @@ class GraphEditor {
                 const mouse = new Point(event.offsetX, event.offsetY);
 
                 if (this.hovered) {
-                    this.selected = this.hovered;
+                    this.#select(this.hovered);
                     this.dragging = true;
                     return;
                 }
 
                 this.graph.addPoint(mouse);
-                this.selected = mouse;
+                this.#select(mouse);
                 this.hovered = mouse;
             }
 
             // Right Click
             if (event.button === 2) {
                 if (this.hovered) this.#removePoint(this.hovered);
+                else this.selected = null;
             }
    
         });
@@ -62,6 +63,11 @@ class GraphEditor {
         this.hovered = null;
 
         if (this.selected === point) this.selected = null;
+    }
+
+    #select(point) {
+        if (this.selected) this.graph.tryAddSegment(new Segment(this.selected, point));
+        this.selected = point;
     }
 
 }
